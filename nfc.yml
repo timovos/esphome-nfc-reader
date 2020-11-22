@@ -1,0 +1,65 @@
+esphome:
+  name: nfc
+  platform: ESP8266
+  board: d1_mini
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  power_save_mode: light
+  manual_ip:
+    static_ip: !secret static_ip
+    gateway: !secret gateway
+    subnet: 255.255.255.0
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+#ota:
+
+spi:
+  clk_pin: D0
+  miso_pin: D1
+  mosi_pin: D2
+
+pn532:
+  cs_pin: D3
+  update_interval: 1s
+
+binary_sensor:
+### NFC Tags ###
+  - platform: pn532
+    uid: 99-EC-8B-9D
+    name: "Kaart 1"
+  - platform: pn532
+    uid: 9A-A1-D1-B2
+    name: "Kaart 2"
+  - platform: pn532
+    uid: 19-2F-4D-C2
+    name: "Sleutelhanger"
+
+sensor:
+### Wifi signaal ###
+  - platform: wifi_signal
+    name: "WiFi signaal NFC ESP"
+    update_interval: 60s
+  - platform: uptime
+    name: Uptime Sensor ESP NFC
+    filters:
+      - lambda: return x / 3600.0;
+    unit_of_measurement: "hours"
+    accuracy_decimals: 2
+
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      name: ESP NFC IP adres
+    ssid:
+      name: ESP NFC IP SSID
+
+switch:
+  - platform: restart
+    name: "ESP NFC herstarten"
